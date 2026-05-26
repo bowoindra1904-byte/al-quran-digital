@@ -1,0 +1,6 @@
+{
+  "name": "Quran Digital",
+  "description": "Aplikasi Al-Quran digital lengkap dengan terjemah, asbabun nuzul, dan makna per ayat yang terintegrasi menggunakan AI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
