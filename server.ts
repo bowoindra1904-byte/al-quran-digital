@@ -48,8 +48,10 @@ MOHON IKUTI PETUNJUK INI DENGAN KETAT:
 
       res.json({ text: response.text });
     } catch (error: any) {
-      console.error("Tafsir Error:", error);
-      res.status(500).json({ error: error?.message || "Gagal memuat tafsir dan asbabun nuzul dari AI." });
+      const errStr = error?.message || (error && JSON.stringify(error)) || error?.toString() || "";
+      console.error("Tafsir Error:", errStr);
+      // Fallback for any AI error
+      res.json({ text: "### Tafsir (Fallback Mode)\n\nMohon maaf, layanan AI sedang terkendala (kemungkinan batas kuota). \n\nSecara umum, ayat-ayat Al-Quran diturunkan untuk menjadi petunjuk, penyembuh, dan rahmat bagi alam semesta. Jadikanlah setiap ayat sebagai bahan renungan untuk mendekatkan diri kepada Allah SWT.\n\n*Silakan coba kembali beberapa saat lagi.*" });
     }
   });
 
@@ -82,13 +84,9 @@ MOHON IKUTI PETUNJUK INI DENGAN KETAT:
 
       res.json({ text: response.text });
     } catch (error: any) {
-      const errStr = error?.message || error?.toString() || "";
-      if (errStr.includes("RESOURCE_EXHAUSTED") || errStr.includes("429") || errStr.includes("Quota") || errStr.includes("quota")) {
-        res.json({ text: "Tarik napas perlahan, dan ingatlah bahwa Allah mengetahui isi hatimu dan beban yang sedang kamu pikul.\n\nDalam menghadapi setiap masalah, serahkanlah hasilnya kepada Allah setelah berusaha sekuat tenaga. Ujian ini adalah cara Allah untuk mendidikmu dan menghapus kesalahan-kesalahanmu di masa lalu.\n\n**Al-Quran:**\n> *\"Allah tidak membebani seseorang melainkan sesuai dengan kesanggupannya.\"* (QS. Al-Baqarah: 286)\n\n**Hadist:**\n> *\"Tidaklah seorang muslim tertimpa suatu kelelahan, atau penyakit, atau kekhawatiran, atau kesedihan, atau gangguan, bahkan duri yang melukainya melainkan Allah akan menghapus dosa-dosanya karenanya.\"* (HR. Bukhari dan Muslim)\n\nBersabarlah dan dirikanlah shalat. Pertolongan Allah sangat mesra bagi hamba-hamba-Nya yang bersabar." });
-        return;
-      }
-      console.error("Ask Error:", error);
-      res.status(500).json({ error: error?.message || "Gagal memuat jawaban dari AI." });
+      const errStr = error?.message || (error && JSON.stringify(error)) || error?.toString() || "";
+      console.error("Ask Error:", errStr);
+      res.json({ text: "Tarik napas perlahan, dan ingatlah bahwa Allah mengetahui isi hatimu dan beban yang sedang kamu pikul.\n\nDalam menghadapi setiap masalah, serahkanlah hasilnya kepada Allah setelah berusaha sekuat tenaga. Ujian ini adalah cara Allah untuk mendidikmu dan menghapus kesalahan-kesalahanmu di masa lalu.\n\n**Al-Quran:**\n> *\"Allah tidak membebani seseorang melainkan sesuai dengan kesanggupannya.\"* (QS. Al-Baqarah: 286)\n\n**Hadist:**\n> *\"Tidaklah seorang muslim tertimpa suatu kelelahan, atau penyakit, atau kekhawatiran, atau kesedihan, atau gangguan, bahkan duri yang melukainya melainkan Allah akan menghapus dosa-dosanya karenanya.\"* (HR. Bukhari dan Muslim)\n\nBersabarlah dan dirikanlah shalat. Pertolongan Allah sangat mesra bagi hamba-hamba-Nya yang bersabar.\n\n*(Catatan: Layanan penjawab sedang sibuk, ini adalah pesan otomatis)*" });
     }
   });
 
@@ -112,13 +110,9 @@ MOHON IKUTI PETUNJUK INI DENGAN KETAT:
 
       res.json({ text: response.text });
     } catch (error: any) {
-      const errStr = error?.message || error?.toString() || "";
-      if (errStr.includes("RESOURCE_EXHAUSTED") || errStr.includes("429") || errStr.includes("Quota") || errStr.includes("quota")) {
-        res.json({ text: "Dunia ini hanyalah tempat persinggahan sejenak.\n\nSetiap hela napas yang kita tarik, sejatinya semakin mendekatkan kita kepada perpisahan yang abadi dengan dunia ini. Namun seringkali kita membangun istana angan-angan, seolah kita akan hidup selamanya.\n\n*Sadarlah*, kain kafan kita mungkin sudah mulai ditenun di suatu tempat, namun kita masih sibuk menjahit dosa dan menunda taubat.\n\n> *Tiap-tiap yang berjiwa akan merasakan mati. Dan sesungguhnya pada hari kiamat sajalah disempurnakan pahalamu.* (QS. Ali Imran: 185)" });
-        return;
-      }
-      console.error("Muhasabah Error:", error);
-      res.status(500).json({ error: error?.message || "Gagal memuat renungan." });
+      const errStr = error?.message || (error && JSON.stringify(error)) || error?.toString() || "";
+      console.error("Muhasabah Error:", errStr);
+      res.json({ text: "Dunia ini hanyalah tempat persinggahan sejenak.\n\nSetiap hela napas yang kita tarik, sejatinya semakin mendekatkan kita kepada perpisahan yang abadi dengan dunia ini. Namun seringkali kita membangun istana angan-angan, seolah kita akan hidup selamanya.\n\n*Sadarlah*, kain kafan kita mungkin sudah mulai ditenun di suatu tempat, namun kita masih sibuk menjahit dosa dan menunda taubat.\n\n> *Tiap-tiap yang berjiwa akan merasakan mati. Dan sesungguhnya pada hari kiamat sajalah disempurnakan pahalamu.* (QS. Ali Imran: 185)\n\n*(Catatan: Layanan AI sedang sibuk, pesani ini dimunculkan secara otomatis)*" });
     }
   });
 
@@ -149,36 +143,32 @@ MOHON KEMBALIKAN DALAM FORMAT JSON BERIKUT (TANPA MARKDOWN, HANYA JSON MURNI):
       const data = JSON.parse(responseText);
       res.json(data);
     } catch (error: any) {
-      const errStr = error?.message || error?.toString() || "";
-      if (errStr.includes("RESOURCE_EXHAUSTED") || errStr.includes("429") || errStr.includes("Quota") || errStr.includes("quota")) {
-        const fallbacks = [
-          {
-            "surah": "Al-Baqarah",
-            "ayat": "286",
-            "arab": "لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا",
-            "terjemahan": "Allah tidak membebani seseorang melainkan sesuai dengan kesanggupannya.",
-            "renungan": "Pekerjaan apa pun dan beban seberat apa pun yang kamu hadapi hari ini, ketahuilah bahwa Allah telah memastikan kamu sanggup memikulnya."
-          },
-          {
-            "surah": "Ash-Sharh",
-            "ayat": "5-6",
-            "arab": "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا ۝ إِنَّ مَعَ الْعُسْرِ يُسْرًا",
-            "terjemahan": "Maka sesungguhnya bersama kesulitan ada kemudahan. Sesungguhnya bersama kesulitan ada kemudahan.",
-            "renungan": "Badai pasti berlalu. Setiap kesulitan yang menimpa niscaya akan membawa kemudahan di belakangnya. Tetaplah berharap dan terus melangkah."
-          },
-          {
-            "surah": "Al-Imran",
-            "ayat": "139",
-            "arab": "وَلَا تَهِنُوا وَلَا تَحْزَنُوا وَأَنتُمُ الْأَعْلَوْنَ إِن كُنتُم مُّؤْمِنِينَ",
-            "terjemahan": "Janganlah kamu bersikap lemah, dan janganlah (pula) kamu bersedih hati, padahal kamulah orang-orang yang paling tinggi (derajatnya), jika kamu orang-orang yang beriman.",
-            "renungan": "Di saat merasa terpuruk, ingatlah bahwa iman menguatkan jiwa. Jangan bersedih, Allah bersamamu."
-          }
-        ];
-        res.json(fallbacks[Math.floor(Math.random() * fallbacks.length)]);
-        return;
-      }
-      console.error("Daily Verse Error:", error);
-      res.status(500).json({ error: error?.message || "Gagal memuat ayat harian." });
+      const errStr = error?.message || (error && JSON.stringify(error)) || error?.toString() || "";
+      console.error("Daily Verse Error:", errStr);
+      const fallbacks = [
+        {
+          "surah": "Al-Baqarah",
+          "ayat": "286",
+          "arab": "لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا",
+          "terjemahan": "Allah tidak membebani seseorang melainkan sesuai dengan kesanggupannya.",
+          "renungan": "Pekerjaan apa pun dan beban seberat apa pun yang kamu hadapi hari ini, ketahuilah bahwa Allah telah memastikan kamu sanggup memikulnya."
+        },
+        {
+          "surah": "Ash-Sharh",
+          "ayat": "5-6",
+          "arab": "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا ۝ إِنَّ مَعَ الْعُسْرِ يُسْرًا",
+          "terjemahan": "Maka sesungguhnya bersama kesulitan ada kemudahan. Sesungguhnya bersama kesulitan ada kemudahan.",
+          "renungan": "Badai pasti berlalu. Setiap kesulitan yang menimpa niscaya akan membawa kemudahan di belakangnya. Tetaplah berharap dan terus melangkah."
+        },
+        {
+          "surah": "Al-Imran",
+          "ayat": "139",
+          "arab": "وَلَا تَهِنُوا وَلَا تَحْزَنُوا وَأَنتُمُ الْأَعْلَوْنَ إِن كُنتُم مُّؤْمِنِينَ",
+          "terjemahan": "Janganlah kamu bersikap lemah, dan janganlah (pula) kamu bersedih hati, padahal kamulah orang-orang yang paling tinggi (derajatnya), jika kamu orang-orang yang beriman.",
+          "renungan": "Di saat merasa terpuruk, ingatlah bahwa iman menguatkan jiwa. Jangan bersedih, Allah bersamamu."
+        }
+      ];
+      res.json(fallbacks[Math.floor(Math.random() * fallbacks.length)]);
     }
   });
 
@@ -202,13 +192,9 @@ MOHON IKUTI PETUNJUK INI:
 
       res.json({ text: response.text });
     } catch (error: any) {
-      const errStr = error?.message || error?.toString() || "";
-      if (errStr.includes("RESOURCE_EXHAUSTED") || errStr.includes("429") || errStr.includes("Quota") || errStr.includes("quota")) {
-        res.json({ text: "### Hukum Fiqih (Fallback Mode)\n\nMohon maaf, layanan sedang mencapai batas penggunaan. Namun secara umum, segala sesuatu dalam muamalah adalah **Mubah** (boleh) sampai ada dalil yang mengharamkannya, dan segala sesuatu dalam ibadah adalah **Haram** (dilarang) sampai ada dalil yang memerintahkannya.\n\n*Silakan coba beberapa saat lagi untuk penjelasan lengkap beserta dalilnya.*" });
-        return;
-      }
-      console.error("Fiqih Error:", error);
-      res.status(500).json({ error: error?.message || "Gagal memuat fiqih." });
+      const errStr = error?.message || (error && JSON.stringify(error)) || error?.toString() || "";
+      console.error("Fiqih Error:", errStr);
+      res.json({ text: "### Hukum Fiqih (Fallback Mode)\n\nMohon maaf, layanan AI sedang sibuk. Namun secara umum, segala sesuatu dalam muamalah adalah **Mubah** (boleh) sampai ada dalil yang mengharamkannya, dan segala sesuatu dalam ibadah adalah **Haram** (dilarang) sampai ada dalil yang memerintahkannya.\n\n*Silakan coba beberapa saat lagi untuk penjelasan lengkap beserta dalilnya.*" });
     }
   });
 
@@ -232,13 +218,9 @@ MOHON IKUTI PETUNJUK INI:
 
       res.json({ text: response.text });
     } catch (error: any) {
-      const errStr = error?.message || error?.toString() || "";
-      if (errStr.includes("RESOURCE_EXHAUSTED") || errStr.includes("429") || errStr.includes("Quota") || errStr.includes("quota")) {
-        res.json({ text: "### Keemasan Bani Umayyah di Andalusia\n\nDi saat Eropa masih berada dalam masa kegelapan (Dark Ages), semenanjung Iberia (Spanyol saat ini) justru bersinar terang di bawah pemerintahan Muslim. Kordoba menjadi kota paling maju di Eropa, dengan jalan-jalan beraspal yang diterangi lampu di malam hari, rumah sakit canggih, dan perpustakaan raksasa yang menyimpan ratusan ribu manuskrip.\n\nTokoh pahlawan seperti Tariq bin Ziyad membuka jalan dakwah ke wilayah ini, dan memicu akulturasi budaya, ilmu pengetahuan, dan toleransi yang jarang terdengar pada zamannya." });
-        return;
-      }
-      console.error("History Error:", error);
-      res.status(500).json({ error: error?.message || "Gagal memuat sejarah." });
+      const errStr = error?.message || (error && JSON.stringify(error)) || error?.toString() || "";
+      console.error("History Error:", errStr);
+      res.json({ text: "### Keemasan Bani Umayyah di Andalusia (Fallback Mode)\n\nDi saat Eropa masih berada dalam masa kegelapan (Dark Ages), semenanjung Iberia (Spanyol saat ini) justru bersinar terang di bawah pemerintahan Muslim. Kordoba menjadi kota paling maju di Eropa, dengan jalan-jalan beraspal yang diterangi lampu di malam hari, rumah sakit canggih, dan perpustakaan raksasa yang menyimpan ratusan ribu manuskrip.\n\nTokoh pahlawan seperti Tariq bin Ziyad membuka jalan dakwah ke wilayah ini, dan memicu akulturasi budaya, ilmu pengetahuan, dan toleransi yang jarang terdengar pada zamannya.\n\n*(Catatan: Layanan AI sedang sibuk, coba sesaat lagi untuk riwayat lain)*" });
     }
   });
 
